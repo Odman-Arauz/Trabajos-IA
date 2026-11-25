@@ -1,0 +1,1629 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agente Tutor de Inteligencia Artificial</title>
+
+<style>
+:root {
+    --bg: #0b1020;
+    --panel: #141d30;
+    --panel2: #1b2940;
+    --border: #2c3b53;
+    --text: #f1f5f9;
+    --muted: #94a3b8;
+    --primary: #818cf8;
+    --primary2: #6366f1;
+    --green: #22c55e;
+    --red: #ef4444;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: Arial, sans-serif;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+button, input, select {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+.app {
+    max-width: 1050px;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100vh - 40px);
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 15px 50px #0005;
+}
+
+/* HEADER */
+
+header {
+    padding: 20px;
+    background: #111b2e;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo {
+    width: 45px;
+    height: 45px;
+    display: grid;
+    place-items: center;
+    border-radius: 13px;
+    font-size: 24px;
+    background: linear-gradient(135deg, #6366f1, #06b6d4);
+}
+
+.brand h1 {
+    font-size: 17px;
+}
+
+.brand p {
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+.header-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+select {
+    background: var(--panel2);
+    border: 1px solid var(--border);
+    color: white;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+/* GUIDE */
+
+.guide {
+    margin: 15px 20px 0;
+    padding: 12px 15px;
+    background: #172b48;
+    border: 1px solid #29476c;
+    border-radius: 10px;
+    font-size: 12px;
+    line-height: 1.7;
+    color: #cbd5e1;
+}
+
+.guide strong {
+    color: #a5b4fc;
+}
+
+/* CHAT */
+
+.chat {
+    flex: 1;
+    padding: 22px;
+    min-height: 390px;
+    max-height: 570px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 17px;
+    scroll-behavior: smooth;
+}
+
+.message {
+    display: flex;
+    gap: 10px;
+    max-width: 90%;
+    animation: appear .2s ease;
+}
+
+@keyframes appear {
+    from {
+        opacity: 0;
+        transform: translateY(7px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.message.user {
+    align-self: flex-end;
+    flex-direction: row-reverse;
+}
+
+.avatar {
+    width: 33px;
+    height: 33px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: #34446b;
+    font-size: 15px;
+}
+
+.user .avatar {
+    background: #4f46e5;
+}
+
+.bubble {
+    background: var(--panel2);
+    border: 1px solid var(--border);
+    padding: 13px 15px;
+    border-radius: 4px 14px 14px 14px;
+    font-size: 14px;
+    line-height: 1.65;
+    overflow-wrap: anywhere;
+}
+
+.user .bubble {
+    background: #343b79;
+    border-color: #4f52a5;
+    border-radius: 14px 4px 14px 14px;
+}
+
+.bubble strong {
+    color: #a5b4fc;
+}
+
+.bubble ul {
+    margin: 8px 0 8px 20px;
+}
+
+.bubble li {
+    margin-bottom: 5px;
+}
+
+.bubble p + p {
+    margin-top: 8px;
+}
+
+/* QUICK BUTTONS */
+
+.quick-area {
+    padding: 0 20px 17px;
+}
+
+.quick-title {
+    color: var(--muted);
+    font-size: 12px;
+    margin-bottom: 10px;
+}
+
+.quick-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.quick-buttons button {
+    padding: 9px 13px;
+    color: #c7d2fe;
+    background: #202d48;
+    border: 1px solid #3b4c72;
+    border-radius: 20px;
+    font-size: 12px;
+    transition: .2s;
+}
+
+.quick-buttons button:hover {
+    background: #343b79;
+    border-color: var(--primary);
+}
+
+/* INPUT */
+
+.input-area {
+    display: flex;
+    gap: 10px;
+    padding: 15px 20px;
+    border-top: 1px solid var(--border);
+    background: #111b2e;
+}
+
+.input-area input {
+    flex: 1;
+    min-width: 0;
+    background: #0b1426;
+    border: 1px solid var(--border);
+    color: white;
+    border-radius: 10px;
+    padding: 14px;
+    outline: none;
+}
+
+.input-area input:focus {
+    border-color: var(--primary);
+}
+
+.send {
+    background: var(--primary2);
+    border: none;
+    color: white;
+    border-radius: 10px;
+    padding: 0 20px;
+    font-weight: bold;
+}
+
+/* GENERAL BUTTONS */
+
+.secondary {
+    background: #27344b;
+    border: 1px solid var(--border);
+    color: white;
+    padding: 10px 13px;
+    border-radius: 8px;
+    font-size: 12px;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+    outline: 2px solid #a5b4fc;
+    outline-offset: 3px;
+}
+
+button:disabled {
+    opacity: .55;
+    cursor: not-allowed;
+}
+
+/* QUIZ */
+
+.quiz-section {
+    display: none;
+    padding: 25px;
+    border-top: 1px solid var(--border);
+}
+
+.quiz-section.visible {
+    display: block;
+}
+
+.quiz-card {
+    max-width: 650px;
+    margin: auto;
+    background: #1b2940;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px;
+}
+
+.quiz-card h2 {
+    font-size: 20px;
+    margin-bottom: 8px;
+}
+
+.quiz-description {
+    color: var(--muted);
+    font-size: 13px;
+    margin-bottom: 20px;
+}
+
+.progress {
+    height: 7px;
+    background: #0b1426;
+    border-radius: 20px;
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+.progress-bar {
+    height: 100%;
+    background: var(--primary);
+    width: 0;
+    transition: .3s;
+}
+
+.question-number {
+    font-size: 12px;
+    color: #a5b4fc;
+    margin-bottom: 10px;
+}
+
+.question {
+    font-size: 17px;
+    line-height: 1.5;
+    margin-bottom: 17px;
+}
+
+.options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.option {
+    text-align: left;
+    padding: 13px;
+    color: white;
+    background: #263650;
+    border: 1px solid #40516b;
+    border-radius: 9px;
+    line-height: 1.5;
+}
+
+.option:hover:not(:disabled) {
+    border-color: var(--primary);
+    background: #303e60;
+}
+
+.option.correct {
+    border-color: var(--green);
+    background: #16452e;
+}
+
+.option.incorrect {
+    border-color: var(--red);
+    background: #54242d;
+}
+
+.feedback {
+    display: none;
+    margin-top: 15px;
+    padding: 13px;
+    border-radius: 9px;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.feedback.visible {
+    display: block;
+}
+
+.feedback.good {
+    background: #123e2a;
+    color: #bbf7d0;
+}
+
+.feedback.bad {
+    background: #49242c;
+    color: #fecaca;
+}
+
+.quiz-next {
+    margin-top: 15px;
+    width: 100%;
+    padding: 13px;
+    border: none;
+    border-radius: 9px;
+    color: white;
+    background: var(--primary2);
+    font-weight: bold;
+    display: none;
+}
+
+.result {
+    text-align: center;
+    padding: 20px 5px;
+}
+
+.grade {
+    font-size: 58px;
+    font-weight: bold;
+    color: #a5b4fc;
+    margin: 20px 0 10px;
+}
+
+.result p {
+    color: #cbd5e1;
+    line-height: 1.7;
+    margin-bottom: 15px;
+}
+
+.result button {
+    padding: 12px 20px;
+    margin-top: 10px;
+    border-radius: 9px;
+    border: none;
+    background: var(--primary2);
+    color: white;
+    font-weight: bold;
+}
+
+/* FOOTER */
+
+footer {
+    padding: 14px;
+    text-align: center;
+    color: #64748b;
+    font-size: 11px;
+    border-top: 1px solid var(--border);
+}
+
+@media(max-width: 600px) {
+    body {
+        padding: 0;
+    }
+
+    .app {
+        border-radius: 0;
+        min-height: 100vh;
+    }
+
+    header {
+        padding: 15px;
+    }
+
+    .brand h1 {
+        font-size: 14px;
+    }
+
+    .header-controls {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .chat {
+        padding: 15px;
+        min-height: 350px;
+    }
+
+    .message {
+        max-width: 96%;
+    }
+
+    .input-area {
+        padding: 12px;
+    }
+
+    .send {
+        padding: 0 14px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- CABECERA -->
+
+    <header>
+
+        <div class="brand">
+
+            <div class="logo">🤖</div>
+
+            <div>
+                <h1>AGENTE TUTOR DE IA</h1>
+                <p>Tu asistente de aprendizaje interactivo</p>
+            </div>
+
+        </div>
+
+        <div class="header-controls">
+
+            <label for="level" style="font-size:12px;color:#94a3b8">
+                Nivel:
+            </label>
+
+            <select id="level" aria-label="Seleccionar nivel de aprendizaje">
+                <option value="beginner">Principiante</option>
+                <option value="intermediate">Intermedio</option>
+            </select>
+
+            <button class="secondary" onclick="restartConversation()">
+                ↻ Reiniciar
+            </button>
+
+        </div>
+
+    </header>
+
+
+    <!-- GUIA DE USO -->
+
+    <div class="guide">
+
+        <strong>📘 ¿Cómo utilizar el tutor?</strong>
+
+        Escribe una pregunta sobre Inteligencia Artificial o selecciona
+        uno de los temas sugeridos. Puedes cambiar tu nivel de aprendizaje,
+        resolver pequeños retos y finalizar con una evaluación de 5 preguntas.
+
+    </div>
+
+
+    <!-- CONVERSACION -->
+
+    <main
+        class="chat"
+        id="chat"
+        aria-label="Conversación con el agente tutor"
+        aria-live="polite"
+    >
+    </main>
+
+
+    <!-- ACCESOS RAPIDOS -->
+
+    <section class="quick-area">
+
+        <p class="quick-title">Explora un tema:</p>
+
+        <div class="quick-buttons">
+
+            <button onclick="quickTopic('¿Qué es la Inteligencia Artificial?')">
+                ¿Qué es IA?
+            </button>
+
+            <button onclick="quickTopic('Explícame Machine Learning')">
+                Machine Learning
+            </button>
+
+            <button onclick="quickTopic('¿Qué es Deep Learning?')">
+                Deep Learning
+            </button>
+
+            <button onclick="quickTopic('¿Qué es IA Generativa?')">
+                IA Generativa
+            </button>
+
+            <button onclick="quickTopic('¿Cómo funciona la IA?')">
+                ¿Cómo funciona?
+            </button>
+
+            <button onclick="quickTopic('Uso responsable de la IA')">
+                Uso responsable
+            </button>
+
+            <button onclick="startQuiz()">
+                📝 Evaluación
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- ENTRADA DE MENSAJES -->
+
+    <form class="input-area" id="chatForm">
+
+        <input
+            id="userInput"
+            type="text"
+            placeholder="Escribe tu pregunta sobre Inteligencia Artificial..."
+            aria-label="Escribe tu pregunta"
+            autocomplete="off"
+            required
+        >
+
+        <button class="send" type="submit">
+            Enviar ➤
+        </button>
+
+    </form>
+
+
+    <!-- EVALUACION -->
+
+    <section class="quiz-section" id="quizSection">
+
+        <div class="quiz-card" id="quizCard">
+
+            <h2>🧠 Evaluación de conocimientos</h2>
+
+            <p class="quiz-description">
+                Responde las cinco preguntas para comprobar lo aprendido.
+                Cada respuesta correcta vale 2 puntos.
+            </p>
+
+            <div class="progress">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+
+            <div id="quizContent"></div>
+
+        </div>
+
+    </section>
+
+
+    <footer>
+        AGENTE TUTOR DE INTELIGENCIA ARTIFICIAL |
+        Sistema educativo interactivo
+    </footer>
+
+</div>
+
+
+<script>
+
+// ======================================================
+// 1. ELEMENTOS Y ESTADO GENERAL
+// ======================================================
+
+const chat = document.getElementById("chat");
+const input = document.getElementById("userInput");
+const level = document.getElementById("level");
+const quizSection = document.getElementById("quizSection");
+
+let conversationStarted = false;
+
+
+// ======================================================
+// 2. FUNCIONES PARA EL CHAT
+// ======================================================
+
+function addMessage(text, sender = "bot") {
+
+    const message = document.createElement("div");
+
+    message.className = "message " + sender;
+
+    const avatar = document.createElement("div");
+    avatar.className = "avatar";
+    avatar.textContent = sender === "bot" ? "🤖" : "👤";
+
+    const bubble = document.createElement("div");
+    bubble.className = "bubble";
+
+    // Las respuestas HTML son contenido fijo del tutor.
+    // Los mensajes del usuario se insertan siempre como texto.
+    if (sender === "bot") {
+        bubble.innerHTML = text;
+    } else {
+        bubble.textContent = text;
+    }
+
+    message.appendChild(avatar);
+    message.appendChild(bubble);
+
+    chat.appendChild(message);
+
+    chat.scrollTop = chat.scrollHeight;
+}
+
+
+function welcome() {
+
+    addMessage(`
+        ¡Hola! 👋 Soy tu <strong>Agente Tutor de Inteligencia Artificial</strong>.
+
+        <p>Estoy aquí para ayudarte a comprender el mundo de la IA
+        de una manera sencilla, práctica e interactiva.</p>
+
+        <p>Podemos aprender sobre:</p>
+
+        <ul>
+            <li>Inteligencia Artificial.</li>
+            <li>Machine Learning.</li>
+            <li>Deep Learning.</li>
+            <li>Inteligencia Artificial Generativa.</li>
+            <li>Funcionamiento y uso responsable.</li>
+        </ul>
+
+        <p><strong>¿Por dónde quieres comenzar?</strong></p>
+    `);
+
+}
+
+
+// ======================================================
+// 3. BASE DE CONOCIMIENTO
+// ======================================================
+
+const knowledge = {
+
+    ia: {
+
+        beginner: `
+            <strong>¿Qué es la Inteligencia Artificial?</strong>
+
+            <p>La Inteligencia Artificial (IA) es un campo de la
+            informática que desarrolla sistemas capaces de realizar
+            tareas que normalmente requieren capacidades asociadas
+            con la inteligencia humana.</p>
+
+            <p>Por ejemplo:</p>
+
+            <ul>
+                <li>Reconocer imágenes.</li>
+                <li>Comprender y procesar lenguaje.</li>
+                <li>Identificar patrones.</li>
+                <li>Hacer predicciones.</li>
+            </ul>
+
+            <p><strong>Ejemplo cotidiano:</strong> un sistema que
+            reconoce el rostro para desbloquear un teléfono.</p>
+        `,
+
+        intermediate: `
+            <strong>Inteligencia Artificial (IA)</strong>
+
+            <p>Es un campo de la informática dedicado al diseño
+            de sistemas que perciben información, realizan
+            inferencias, generan resultados o toman decisiones
+            para alcanzar objetivos definidos.</p>
+
+            <p>Incluye enfoques basados en reglas, búsqueda,
+            representación del conocimiento y aprendizaje
+            automático, entre otros.</p>
+
+            <p>La IA no implica necesariamente conciencia,
+            emociones ni comprensión humana.</p>
+        `
+    },
+
+
+    ml: {
+
+        beginner: `
+            <strong>¿Qué es Machine Learning?</strong>
+
+            <p>Machine Learning o aprendizaje automático es una
+            rama de la IA que permite a los sistemas aprender
+            patrones a partir de datos.</p>
+
+            <p>En lugar de programar manualmente cada regla,
+            se utiliza información para entrenar un modelo.</p>
+
+            <strong>Ejemplo:</strong>
+
+            <p>Un filtro de correo aprende a identificar
+            mensajes que probablemente sean spam.</p>
+        `,
+
+        intermediate: `
+            <strong>Machine Learning (ML)</strong>
+
+            <p>Es una disciplina que desarrolla algoritmos
+            capaces de ajustar modelos a partir de datos
+            para realizar predicciones o identificar patrones.</p>
+
+            <p>Sus enfoques principales incluyen:</p>
+
+            <ul>
+                <li><strong>Supervisado:</strong> utiliza datos etiquetados.</li>
+                <li><strong>No supervisado:</strong> busca estructuras
+                en datos sin etiquetas.</li>
+                <li><strong>Por refuerzo:</strong> aprende mediante
+                interacciones, recompensas y penalizaciones.</li>
+            </ul>
+        `
+    },
+
+
+    dl: {
+
+        beginner: `
+            <strong>¿Qué es Deep Learning?</strong>
+
+            <p>Deep Learning o aprendizaje profundo es un
+            área del Machine Learning que utiliza redes
+            neuronales artificiales con múltiples capas.</p>
+
+            <p>Estas redes pueden aprender representaciones
+            complejas a partir de grandes cantidades de datos.</p>
+
+            <strong>Ejemplo:</strong>
+
+            <p>Un sistema que aprende a reconocer objetos
+            dentro de fotografías.</p>
+        `,
+
+        intermediate: `
+            <strong>Deep Learning (DL)</strong>
+
+            <p>Es una subárea del aprendizaje automático
+            basada en redes neuronales profundas.</p>
+
+            <p>Las distintas capas transforman progresivamente
+            los datos y permiten aprender características
+            de diferentes niveles de abstracción.</p>
+
+            <p>Se utiliza en visión artificial, reconocimiento
+            de voz, procesamiento de lenguaje natural y
+            otras aplicaciones.</p>
+        `
+    },
+
+
+    generative: {
+
+        beginner: `
+            <strong>¿Qué es la IA Generativa?</strong>
+
+            <p>Es un tipo de inteligencia artificial capaz
+            de generar contenido nuevo a partir de patrones
+            aprendidos durante su entrenamiento.</p>
+
+            <p>Puede producir:</p>
+
+            <ul>
+                <li>Textos.</li>
+                <li>Imágenes.</li>
+                <li>Audio.</li>
+                <li>Video.</li>
+                <li>Código informático.</li>
+            </ul>
+
+            <strong>Ejemplo:</strong>
+
+            <p>Un asistente que redacta un resumen a partir
+            de una instrucción del usuario.</p>
+        `,
+
+        intermediate: `
+            <strong>Inteligencia Artificial Generativa</strong>
+
+            <p>Comprende modelos que aprenden distribuciones
+            y patrones de datos para producir nuevas muestras
+            o contenidos condicionados por una instrucción
+            o entrada.</p>
+
+            <p>Entre sus enfoques técnicos se encuentran:</p>
+
+            <ul>
+                <li>Modelos Transformer.</li>
+                <li>Modelos de difusión.</li>
+                <li>Modelos autorregresivos.</li>
+            </ul>
+
+            <p>El contenido generado puede ser incorrecto
+            y necesita evaluación humana.</p>
+        `
+    },
+
+
+    funcionamiento: {
+
+        beginner: `
+            <strong>¿Cómo funciona la IA?</strong>
+
+            <p>Podemos entender su funcionamiento mediante
+            cuatro pasos generales:</p>
+
+            <ul>
+                <li><strong>1. Datos:</strong> se recopila
+                información relevante.</li>
+                <li><strong>2. Entrenamiento:</strong> el modelo
+                aprende patrones a partir de los datos.</li>
+                <li><strong>3. Entrada:</strong> recibe información
+                nueva.</li>
+                <li><strong>4. Resultado:</strong> produce una
+                predicción, clasificación o contenido.</li>
+            </ul>
+
+            <p>El proceso concreto depende del tipo de sistema
+            y del método utilizado.</p>
+        `,
+
+        intermediate: `
+            <strong>Funcionamiento de un sistema de IA</strong>
+
+            <p>En un sistema basado en Machine Learning,
+            el proceso generalmente comprende:</p>
+
+            <ul>
+                <li>Preparación y selección de datos.</li>
+                <li>Elección de una arquitectura o algoritmo.</li>
+                <li>Entrenamiento y ajuste de parámetros.</li>
+                <li>Validación y evaluación del modelo.</li>
+                <li>Inferencia sobre datos nuevos.</li>
+                <li>Monitoreo y mantenimiento.</li>
+            </ul>
+
+            <p>Entrenamiento e inferencia son procesos
+            distintos: el primero ajusta el modelo y el
+            segundo utiliza el modelo ya entrenado.</p>
+        `
+    },
+
+
+    responsible: {
+
+        beginner: `
+            <strong>Uso responsable de la Inteligencia Artificial</strong>
+
+            <p>La IA puede ayudarnos, pero debemos utilizarla
+            de forma responsable.</p>
+
+            <ul>
+                <li>Verificar la información generada.</li>
+                <li>Proteger los datos personales.</li>
+                <li>Evitar compartir contraseñas.</li>
+                <li>Identificar posibles sesgos.</li>
+                <li>No utilizarla para engañar o perjudicar.</li>
+                <li>Mantener supervisión humana cuando sea necesaria.</li>
+            </ul>
+
+            <p><strong>Recuerda:</strong> una respuesta
+            convincente no siempre es una respuesta correcta.</p>
+        `,
+
+        intermediate: `
+            <strong>Principios de IA responsable</strong>
+
+            <p>El desarrollo y uso responsable de IA debe
+            considerar:</p>
+
+            <ul>
+                <li><strong>Transparencia:</strong> informar
+                cuándo se utiliza IA.</li>
+                <li><strong>Privacidad:</strong> proteger los
+                datos personales.</li>
+                <li><strong>Equidad:</strong> identificar y
+                reducir sesgos injustificados.</li>
+                <li><strong>Seguridad:</strong> evaluar riesgos
+                y posibles daños.</li>
+                <li><strong>Responsabilidad:</strong> establecer
+                mecanismos de supervisión y rendición de cuentas.</li>
+            </ul>
+        `
+    }
+
+};
+
+
+// ======================================================
+// 4. IDENTIFICACIÓN DE TEMAS
+// ======================================================
+
+function identifyTopic(message) {
+
+    const text = message
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "");
+
+    if (
+        text.includes("responsable") ||
+        text.includes("etica") ||
+        text.includes("privacidad") ||
+        text.includes("sesgo") ||
+        text.includes("riesgo")
+    ) return "responsible";
+
+    if (
+        text.includes("generativa") ||
+        text.includes("generar contenido") ||
+        text.includes("crear imagen")
+    ) return "generative";
+
+    if (
+        text.includes("deep learning") ||
+        text.includes("aprendizaje profundo") ||
+        text.includes("red neuronal")
+    ) return "dl";
+
+    if (
+        text.includes("machine learning") ||
+        text.includes("aprendizaje automatico")
+    ) return "ml";
+
+    if (
+        text.includes("como funciona") ||
+        text.includes("funcionamiento") ||
+        text.includes("entrenamiento") ||
+        text.includes("datos")
+    ) return "funcionamiento";
+
+    if (
+        text.includes("que es ia") ||
+        text.includes("inteligencia artificial") ||
+        text === "ia" ||
+        text.includes("definicion de ia")
+    ) return "ia";
+
+    return null;
+
+}
+
+
+// ======================================================
+// 5. MOTOR DE RESPUESTAS
+// ======================================================
+
+function respond(message) {
+
+    const normalized = message.toLowerCase();
+
+    const topic = identifyTopic(message);
+
+    if (
+        normalized.includes("hola") ||
+        normalized.includes("buenos dias") ||
+        normalized.includes("buenas tardes") ||
+        normalized.includes("buenas noches")
+    ) {
+
+        return `
+            ¡Hola nuevamente! 😊
+
+            Estoy listo para continuar enseñándote
+            sobre Inteligencia Artificial.
+
+            Puedes seleccionar un tema o escribirme
+            una pregunta.
+        `;
+
+    }
+
+    if (
+        normalized.includes("gracias")
+    ) {
+
+        return `
+            ¡Con mucho gusto! 😊
+
+            Recuerda que aprender sobre IA también
+            implica cuestionar, investigar y verificar
+            la información.
+        `;
+
+    }
+
+    if (
+        normalized.includes("adios") ||
+        normalized.includes("hasta luego")
+    ) {
+
+        return `
+            ¡Hasta pronto! 👋
+
+            Ha sido un gusto acompañarte en este
+            aprendizaje. Puedes regresar cuando
+            quieras continuar.
+        `;
+
+    }
+
+    if (topic) {
+
+        const currentLevel = level.value;
+
+        return knowledge[topic][currentLevel];
+
+    }
+
+    if (
+        normalized.includes("diferencia") ||
+        normalized.includes("comparar")
+    ) {
+
+        return `
+            <strong>Diferencia entre las principales ramas:</strong>
+
+            <ul>
+                <li><strong>IA:</strong> campo general que desarrolla
+                sistemas inteligentes.</li>
+                <li><strong>Machine Learning:</strong> permite
+                aprender patrones a partir de datos.</li>
+                <li><strong>Deep Learning:</strong> utiliza redes
+                neuronales con múltiples capas.</li>
+                <li><strong>IA Generativa:</strong> produce
+                contenido nuevo.</li>
+            </ul>
+
+            <p>Deep Learning es una subárea de Machine Learning,
+            y Machine Learning es una de las áreas de la IA.</p>
+        `;
+
+    }
+
+    if (
+        normalized.includes("ejemplo") ||
+        normalized.includes("aplicacion") ||
+        normalized.includes("utiliza") ||
+        normalized.includes("donde se usa")
+    ) {
+
+        return `
+            <strong>Ejemplos de aplicaciones de IA:</strong>
+
+            <ul>
+                <li>Medicina: apoyo en análisis de imágenes médicas.</li>
+                <li>Educación: herramientas de aprendizaje adaptativo.</li>
+                <li>Transporte: sistemas de asistencia a la conducción.</li>
+                <li>Banca: detección de operaciones potencialmente
+                fraudulentas.</li>
+                <li>Comunicación: reconocimiento y traducción de voz.</li>
+            </ul>
+
+            <p>Estos sistemas necesitan evaluación y supervisión
+            según el riesgo de cada aplicación.</p>
+        `;
+
+    }
+
+    return `
+        No tengo una respuesta específica para esa pregunta
+        dentro de mi base de conocimiento actual. 🤔
+
+        <p>Pero puedo ayudarte con estos temas:</p>
+
+        <ul>
+            <li>¿Qué es la Inteligencia Artificial?</li>
+            <li>¿Qué es Machine Learning?</li>
+            <li>¿Qué es Deep Learning?</li>
+            <li>¿Qué es IA Generativa?</li>
+            <li>¿Cómo funciona la IA?</li>
+            <li>¿Cómo utilizar la IA responsablemente?</li>
+        </ul>
+
+        <p>Intenta formular tu pregunta utilizando
+        uno de estos conceptos.</p>
+    `;
+
+}
+
+
+// ======================================================
+// 6. ENVÍO DE MENSAJES
+// ======================================================
+
+function sendMessage(message) {
+
+    const text = message.trim();
+
+    if (!text) return;
+
+    quizSection.classList.remove("visible");
+
+    addMessage(text, "user");
+
+    const answer = respond(text);
+
+    addMessage(answer, "bot");
+
+    conversationStarted = true;
+
+    input.value = "";
+    input.focus();
+
+}
+
+
+document.getElementById("chatForm").addEventListener(
+    "submit",
+    function(event) {
+
+        event.preventDefault();
+
+        sendMessage(input.value);
+
+    }
+);
+
+
+function quickTopic(topic) {
+
+    sendMessage(topic);
+
+}
+
+
+// ======================================================
+// 7. BANCO DE PREGUNTAS DE EVALUACIÓN
+// ======================================================
+
+const questions = [
+
+    {
+        question: "¿Qué es la Inteligencia Artificial?",
+
+        options: [
+            "Un campo de la informática que desarrolla sistemas capaces de realizar tareas asociadas con la inteligencia.",
+            "Un dispositivo físico que sustituye todos los computadores.",
+            "Un lenguaje de programación exclusivamente.",
+            "Una red social."
+        ],
+
+        correct: 0,
+
+        explanation:
+            "La IA es un campo de la informática que desarrolla sistemas capaces de realizar tareas como reconocer patrones, procesar lenguaje o hacer predicciones."
+    },
+
+    {
+        question: "¿Qué caracteriza al Machine Learning?",
+
+        options: [
+            "Solo almacena archivos.",
+            "Aprende patrones a partir de datos.",
+            "Únicamente crea imágenes.",
+            "No utiliza algoritmos."
+        ],
+
+        correct: 1,
+
+        explanation:
+            "Machine Learning utiliza algoritmos que permiten ajustar modelos a partir de datos."
+    },
+
+    {
+        question: "¿Qué utiliza principalmente el Deep Learning?",
+
+        options: [
+            "Hojas de cálculo.",
+            "Bases de datos relacionales exclusivamente.",
+            "Redes neuronales con múltiples capas.",
+            "Sistemas operativos."
+        ],
+
+        correct: 2,
+
+        explanation:
+            "Deep Learning utiliza redes neuronales profundas para aprender representaciones complejas."
+    },
+
+    {
+        question: "¿Cuál es una capacidad de la IA Generativa?",
+
+        options: [
+            "Reparar físicamente cualquier computadora.",
+            "Garantizar que toda información sea verdadera.",
+            "Eliminar todos los errores humanos.",
+            "Generar textos, imágenes, audio u otros contenidos."
+        ],
+
+        correct: 3,
+
+        explanation:
+            "La IA Generativa puede producir diferentes tipos de contenido, aunque sus resultados deben verificarse."
+    },
+
+    {
+        question: "¿Cuál es una práctica responsable al utilizar IA?",
+
+        options: [
+            "Compartir contraseñas con cualquier sistema.",
+            "Verificar la información y proteger los datos personales.",
+            "Aceptar todas las respuestas sin comprobarlas.",
+            "Utilizarla para engañar a otras personas."
+        ],
+
+        correct: 1,
+
+        explanation:
+            "El uso responsable requiere verificar resultados, proteger la privacidad y considerar posibles sesgos."
+    }
+
+];
+
+
+// ======================================================
+// 8. VARIABLES DEL EVALUADOR
+// ======================================================
+
+let questionIndex = 0;
+
+let correctAnswers = 0;
+
+let answered = false;
+
+
+// ======================================================
+// 9. INICIAR EVALUACIÓN
+// ======================================================
+
+function startQuiz() {
+
+    quizSection.classList.add("visible");
+
+    quizSection.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
+
+    questionIndex = 0;
+
+    correctAnswers = 0;
+
+    answered = false;
+
+    renderQuestion();
+
+}
+
+
+// ======================================================
+// 10. MOSTRAR PREGUNTAS
+// ======================================================
+
+function renderQuestion() {
+
+    answered = false;
+
+    const question = questions[questionIndex];
+
+    const content = document.getElementById("quizContent");
+
+    const progress = document.getElementById("progressBar");
+
+    progress.style.width =
+        (questionIndex / questions.length * 100) + "%";
+
+    let optionsHTML = "";
+
+    question.options.forEach((option, index) => {
+
+        optionsHTML += `
+            <button
+                class="option"
+                onclick="checkAnswer(${index})"
+                aria-label="Opción ${index + 1}: ${option}"
+            >
+                ${String.fromCharCode(65 + index)}. ${option}
+            </button>
+        `;
+
+    });
+
+    content.innerHTML = `
+
+        <div class="question-number">
+            PREGUNTA ${questionIndex + 1} DE ${questions.length}
+        </div>
+
+        <div class="question">
+            ${question.question}
+        </div>
+
+        <div class="options">
+            ${optionsHTML}
+        </div>
+
+        <div class="feedback" id="feedback"
+             role="status" aria-live="polite">
+        </div>
+
+        <button
+            class="quiz-next"
+            id="nextButton"
+            onclick="nextQuestion()"
+        >
+            SIGUIENTE PREGUNTA →
+        </button>
+
+    `;
+
+}
+
+
+// ======================================================
+// 11. COMPROBAR RESPUESTA
+// ======================================================
+
+function checkAnswer(selected) {
+
+    if (answered) return;
+
+    answered = true;
+
+    const question = questions[questionIndex];
+
+    const buttons = document.querySelectorAll(".option");
+
+    const feedback = document.getElementById("feedback");
+
+    const isCorrect = selected === question.correct;
+
+    if (isCorrect) {
+
+        correctAnswers++;
+
+        feedback.className = "feedback visible good";
+
+        feedback.innerHTML =
+            "<strong>¡Correcto! ✓</strong><br>" +
+            question.explanation;
+
+    } else {
+
+        feedback.className = "feedback visible bad";
+
+        feedback.innerHTML =
+            "<strong>Respuesta incorrecta.</strong><br>" +
+            "La respuesta correcta es: " +
+            question.options[question.correct] +
+            "<br>" + question.explanation;
+
+    }
+
+    buttons.forEach((button, index) => {
+
+        button.disabled = true;
+
+        if (index === question.correct) {
+
+            button.classList.add("correct");
+
+        }
+
+        if (index === selected && !isCorrect) {
+
+            button.classList.add("incorrect");
+
+        }
+
+    });
+
+    const nextButton = document.getElementById("nextButton");
+
+    nextButton.style.display = "block";
+
+    nextButton.textContent =
+        questionIndex === questions.length - 1
+        ? "VER RESULTADO"
+        : "SIGUIENTE PREGUNTA →";
+
+}
+
+
+// ======================================================
+// 12. SIGUIENTE PREGUNTA
+// ======================================================
+
+function nextQuestion() {
+
+    questionIndex++;
+
+    if (questionIndex < questions.length) {
+
+        renderQuestion();
+
+    } else {
+
+        showResult();
+
+    }
+
+}
+
+
+// ======================================================
+// 13. CALCULAR Y MOSTRAR NOTA
+// ======================================================
+
+function showResult() {
+
+    const content = document.getElementById("quizContent");
+
+    const progress = document.getElementById("progressBar");
+
+    progress.style.width = "100%";
+
+    // Cinco preguntas: cada acierto vale dos puntos.
+
+    const grade = (correctAnswers / questions.length) * 10;
+
+    const formattedGrade = grade.toFixed(1);
+
+    let message = "";
+
+    if (grade >= 9) {
+
+        message = "¡Excelente trabajo! Dominas muy bien los conceptos.";
+
+    } else if (grade >= 7) {
+
+        message = "¡Muy bien! Tienes una buena comprensión de la IA.";
+
+    } else if (grade >= 5) {
+
+        message = "Vas por buen camino. Te recomendamos repasar algunos temas.";
+
+    } else {
+
+        message = "Te recomendamos volver a estudiar los conceptos y repetir la evaluación.";
+
+    }
+
+    content.innerHTML = `
+
+        <div class="result">
+
+            <h2>🎓 Evaluación finalizada</h2>
+
+            <div class="grade">${formattedGrade}/10</div>
+
+            <p>
+                Respuestas correctas:
+                <strong>${correctAnswers} de ${questions.length}</strong>
+            </p>
+
+            <p>${message}</p>
+
+            <button onclick="startQuiz()">
+                🔄 Repetir evaluación
+            </button>
+
+            <br>
+
+            <button onclick="restartConversation()">
+                ↻ Reiniciar conversación
+            </button>
+
+        </div>
+
+    `;
+
+    addMessage(`
+        <strong>¡Has terminado la evaluación!</strong>
+
+        <p>Tu resultado es <strong>${formattedGrade}/10</strong>.</p>
+
+        <p>Respondiste correctamente ${correctAnswers}
+        de ${questions.length} preguntas.</p>
+
+        <p>${message}</p>
+    `);
+
+}
+
+
+// ======================================================
+// 14. REINICIAR CONVERSACIÓN
+// ======================================================
+
+function restartConversation() {
+
+    chat.innerHTML = "";
+
+    quizSection.classList.remove("visible");
+
+    level.value = "beginner";
+
+    questionIndex = 0;
+
+    correctAnswers = 0;
+
+    answered = false;
+
+    input.value = "";
+
+    conversationStarted = false;
+
+    welcome();
+
+    input.focus();
+
+}
+
+
+// ======================================================
+// 15. INICIALIZAR AGENTE
+// ======================================================
+
+welcome();
+
+</script>
+
+</body>
+</html>
